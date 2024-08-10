@@ -18,18 +18,18 @@ npm install -g pm2
 ### 2. Jalankan Aplikasi dengan PM2:
 Jalankan aplikasi Anda menggunakan PM2:
 ```bash
-/root/.nvm/versions/node/v22.4.0/bin/pm2 start /root/call/app.js --name myapp
+/root/.nvm/versions/node/v22.6.0/bin/pm2 start /root/call/app.js --name myapp
 ```
 ### 3. Simpan Daftar Proses PM2:
 Simpan daftar proses PM2 agar PM2 dapat memulihkannya setelah reboot:
 ```bash
-/root/.nvm/versions/node/v22.4.0/bin/pm2 save
+/root/.nvm/versions/node/v22.6.0/bin/pm2 save
 ```
 ## 3. Konfigurasi PM2 untuk Startup
 ### 1. Generate Systemd Startup Script:
 Buat skrip startup PM2 untuk systemd:
 ```bash
-/root/.nvm/versions/node/v22.4.0/bin/pm2 startup systemd
+/root/.nvm/versions/node/v22.6.0/bin/pm2 startup systemd
 ```
 Note : Catat dan salin perintah output yang diberikan, biasanya systemctl enable pm2-root.
 
@@ -53,14 +53,14 @@ User=root
 LimitNOFILE=infinity
 LimitNPROC=infinity
 LimitCORE=infinity
-Environment=PATH=/root/.nvm/versions/node/v22.4.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=PATH=/root/.nvm/versions/node/v22.6.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=PM2_HOME=/root/.pm2
 PIDFile=/root/.pm2/pm2.pid
 Restart=on-failure
 
-ExecStart=/root/.nvm/versions/node/v22.4.0/bin/pm2 resurrect
-ExecReload=/root/.nvm/versions/node/v22.4.0/bin/pm2 reload all
-ExecStop=/root/.nvm/versions/node/v22.4.0/bin/pm2 kill
+ExecStart=/root/.nvm/versions/node/v22.6.0/bin/pm2 resurrect
+ExecReload=/root/.nvm/versions/node/v22.6.0/bin/pm2 reload all
+ExecStop=/root/.nvm/versions/node/v22.6.0/bin/pm2 kill
 
 [Install]
 WantedBy=multi-user.target
@@ -86,7 +86,7 @@ sudo systemctl status pm2-root
 ### 1. Periksa Log Aplikasi:
 Periksa log aplikasi untuk melihat apakah ada kesalahan saat aplikasi dijalankan
 ```bash
-/root/.nvm/versions/node/v22.4.0/bin/pm2 logs
+/root/.nvm/versions/node/v22.6.0/bin/pm2 logs
 ```
 ### 2. Periksa Log Systemd:
 Jika layanan PM2 gagal, periksa log systemd untuk detail kesalahan:
