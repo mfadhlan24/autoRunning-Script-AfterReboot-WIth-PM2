@@ -99,5 +99,77 @@ journalctl -u pm2-root
 which node
 ```
 
+# Menggunakan Systemd otomatis menjalankan .sh dan menggunakan screen 
+## 1. Buat file .shnya dl
+```bash
+#!/bin/bash
+
+# Memastikan environment dan direktori
+echo "Memasuki Directori /root/bot...."
+cd /root/bot || { echo "Directory not found!"; exit 1; }
+
+# Mengatur variabel lingkungan PATH
+echo "Mengexport Variabel PATH"
+export PATH=/root/.nvm/versions/node/v22.6.0/bin:$PATH
+
+echo "Script is running once on boot!" > /root/script_output.log
+
+# Menunggu beberapa detik
+sleep 10
+
+# Menjalankan screen dengan aplikasi hanya jika belum ada sesi dengan nama yang sama
+if ! /usr/bin/screen -list | grep -q "bot_session"; then
+  echo "Menjalankan Perintah Screen dengan nama bot_session dan menjalankan npm start pada path project"
+  /usr/bin/screen -dmS bot_session /root/.nvm/versions/node/v22.6.0/bin/npm start >> /root/call.log 2>&1
+else
+  echo "Sesi screen dengan nama bot_session sudah ada." >> /root/script_output.log
+fi
+
+```
+Note : **Kalian harus tau dulu letak path node dan screen dimana...**
+```bash
+which node
+which screen
+```
+## 2. Beri Hak Exekusi menggunaakan chmod
+```bash
+sudo chmod +x /root/call.sh
+```
+Note : **Terserah mau dinamain apa skripnya...**
+## 3. Buat Unit File Systemd
+Buat file unit systemd untuk menjalankan skrip saat boot di /etc/systemd/system/run-once.service dengan konten berikut:
+```bash
+[Unit]
+Description=Run Script Once on Boot
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/call.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
+```
+## 4. Reload Systemd dan Aktifkan Layanan
+Reload systemd untuk memuat unit file baru dan aktifkan layanan:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable run-once.service
+```
+Note : **Sesuaikan dengan nama service yang anda buat..**
+## 5. Cek Dan Uji
+### - Cek Status Layanan
+```bash
+sudo systemctl status run-once.service
+```
+**Penjelasan:
+
+ExecStart dalam unit file systemd menunjuk ke skrip yang akan dijalankan satu kali saat boot.<br>
+Type=oneshot memastikan layanan hanya dijalankan satu kali.<br>
+RemainAfterExit=true membuat layanan tetap dianggap aktif setelah skrip selesai dijalankan.<br>
+<br>
+Dengan langkah-langkah ini, skrip akan dijalankan satu kali saat boot, dan sesi screen akan dibuat hanya jika belum ada sesi dengan nama yang sama.**
+
 
 
